@@ -2,7 +2,7 @@
 const AI_CHAT_URLS = {
   'ChatGPT': ['https://chat.openai.com', 'https://chatgpt.com'],
   'Claude': 'https://claude.ai',
-  'Gemini': 'https://gemini.google.com',
+  'Gemini': ['https://gemini.google.com', 'https://gemini.google.com/app'],
   'Grok': 'https://grok.com',
   'DeepSeek': 'https://chat.deepseek.com'
 };

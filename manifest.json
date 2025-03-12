@@ -26,6 +26,7 @@
         "https://chatgpt.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
+        "https://gemini.google.com/app/*",
         "https://grok.com/*",
         "https://chat.deepseek.com/*"
       ],

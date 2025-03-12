@@ -72,6 +72,7 @@ async function checkForOpenAIChats() {
     'chatgpt.com',
     'claude.ai',
     'gemini.google.com',
+    'gemini.google.com/app',
     'grok.com',
     'chat.deepseek.com'
   ];

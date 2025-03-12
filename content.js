@@ -23,6 +23,12 @@ const CHAT_SELECTORS = {
     alternativeInputField: 'textarea',
     altSubmitButton: 'button[type="submit"]'
   },
+  'gemini.google.com/app': {
+    inputField: 'textarea[aria-label="Запитайте Gemini"]',
+    submitButton: 'button[aria-label="Надіслати повідомлення"]',
+    alternativeInputField: 'textarea',
+    altSubmitButton: 'button[type="submit"]'
+  },
   'grok.com': {
     inputField: 'textarea.resize-none',
     submitButton: 'button[aria-label="Send message"]',
@@ -54,6 +60,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Функція для визначення, який AI-чат відкритий
 function getCurrentChatType() {
   const url = window.location.href;
+  
+  // Спеціальна обробка для Gemini, оскільки вона має кілька URL-форматів
+  if (url.includes('gemini.google.com/app')) {
+    const selectors = CHAT_SELECTORS['gemini.google.com/app'];
+    const hasInputField = document.querySelector(selectors.inputField) || 
+                         (selectors.alternativeInputField && document.querySelector(selectors.alternativeInputField));
+    if (hasInputField) {
+      return 'gemini.google.com/app';
+    }
+  }
   
   // Перевіряємо кожен домен підтримуваних чатів
   for (const domain in CHAT_SELECTORS) {
