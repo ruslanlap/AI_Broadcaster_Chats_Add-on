@@ -27,3 +27,7 @@ yarn-error.log*
 # Build files
 dist/
 build/
+
+# nix
+.replit
+replit.nix

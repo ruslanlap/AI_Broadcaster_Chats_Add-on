@@ -8,7 +8,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/yourusername/ai-chat-broadcaster/pulls)
 
 <p align="center">
-  <img src="data/icon384.png" alt="AI Chat Broadcaster" width="200">
+  <img src="./data/icon384.png" alt="AI Chat Broadcaster" width="200">
 </p>
 
 **Send messages to multiple AI assistants simultaneously**
@@ -92,7 +92,7 @@ web-ext run
 ## 🚀 Usage
 
 <p align="center">
-  <img src="data/screen.png" alt="How to Use" width="600">
+  <img src="./data/screen.png" alt="How to Use" width="600">
 </p>
 
 <details>
@@ -114,7 +114,7 @@ web-ext run
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="data/screen.png" alt="Screenshot" width="600">
+  <img src="./data/screen.png" alt="Screenshot" width="600">
 </div>
 
 ## 📚 Documentation
