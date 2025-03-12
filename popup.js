@@ -81,13 +81,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Для кожної вибраної вкладки відправляємо повідомлення з більшою затримкою між відправками
     const sendPromises = Array.from(selectedCheckboxes).map((checkbox, index) => {
       const tabId = parseInt(checkbox.dataset.tabId);
-      // Збільшуємо затримку між відправками в різні чати
+      // Значно збільшуємо затримку між відправками в різні чати
       return new Promise(resolve => setTimeout(() => {
         console.log(`Відправляємо повідомлення у вкладку ${tabId}...`);
         
         // Спочатку активуємо вкладку, щоб гарантувати, що вона в фокусі
         browser.tabs.update(tabId, { active: true }).then(() => {
-          // Збільшена затримка після активації вкладки
+          // Збільшуємо затримку після активації вкладки
           setTimeout(() => {
             browser.tabs.sendMessage(tabId, {
               action: 'sendMessage',
@@ -99,12 +99,12 @@ document.addEventListener('DOMContentLoaded', async () => {
               console.error(`Помилка при відправці в tab ${tabId}:`, error);
               resolve({ tabId, success: false, error: error.message || "Невідома помилка" });
             });
-          }, 1000); // Збільшена затримка після активації вкладки до 1 секунди
+          }, 2000); // Збільшена затримка після активації вкладки до 2 секунд
         }).catch(error => {
           console.error(`Помилка при активації вкладки ${tabId}:`, error);
           resolve({ tabId, success: false, error: "Помилка активації вкладки" });
         });
-      }, index * 1500)); // Значно збільшена затримка між відправками (1500мс на кожну вкладку)
+      }, index * 3000)); // Значно збільшена затримка між відправками (3000мс на кожну вкладку)
     });
     
     // Чекаємо завершення всіх відправок

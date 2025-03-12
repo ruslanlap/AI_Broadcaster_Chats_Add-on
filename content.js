@@ -304,47 +304,59 @@ function handleClaudeMessage(inputField, messageText) {
 // Обробник для Gemini
 function handleGeminiMessage(inputField, messageText) {
   try {
-    // Встановлюємо текст кількома методами
+    // Спочатку активно фокусуємося на полі вводу
+    inputField.focus();
+    
+    // Очищаємо поле перед встановленням нового значення
     if (inputField.value !== undefined) {
-      inputField.value = messageText;
-    }
-    if (inputField.textContent !== undefined) {
-      inputField.textContent = messageText;
+      inputField.value = '';
     }
     
-    console.log('Gemini: Встановлено значення');
-    
-    // Симулюємо більше подій з більшою надійністю
-    const events = ['input', 'change', 'keydown', 'keyup', 'focus', 'blur', 'input'];
-    events.forEach(eventType => {
-      try {
-        let event;
-        if (eventType.startsWith('key')) {
-          event = new KeyboardEvent(eventType, { 
-            key: eventType === 'keydown' ? 'a' : 'Enter',
-            bubbles: true,
-            cancelable: true
-          });
-        } else if (eventType === 'input') {
-          try {
-            event = new InputEvent('input', { 
-              bubbles: true,
-              data: messageText,
-              inputType: 'insertText'
-            });
-          } catch (e) {
-            // Якщо InputEvent не підтримується, використовуємо звичайний Event
-            event = new Event('input', { bubbles: true });
-          }
-        } else {
-          event = new Event(eventType, { bubbles: true });
+    // Використовуємо затримку перед встановленням значення
+    setTimeout(() => {
+      // Для Gemini спочатку перевіряємо чи це правильний елемент
+      if (inputField.tagName.toLowerCase() === 'textarea') {
+        // Для textarea використовуємо прямий метод
+        inputField.value = messageText;
+        
+        // Симулюємо натискання клавіш для активації поля
+        inputField.dispatchEvent(new KeyboardEvent('keydown', { 
+          key: 'a',
+          code: 'KeyA',
+          bubbles: true,
+          cancelable: true 
+        }));
+        
+        // Відправляємо кілька подій input для надійності
+        for (let i = 0; i < 2; i++) {
+          setTimeout(() => {
+            try {
+              const inputEvent = new Event('input', { bubbles: true });
+              inputField.dispatchEvent(inputEvent);
+            } catch (e) {
+              console.error('Помилка при відправці input event:', e);
+            }
+          }, i * 200);
         }
-        inputField.dispatchEvent(event);
-      } catch (error) {
-        console.error(`Gemini: Помилка при відправці події ${eventType}:`, error);
+        
+        // Також спробуємо встановити значення через element.setAttribute
+        try {
+          inputField.setAttribute('value', messageText);
+        } catch (e) {
+          console.error('Помилка при встановленні значення через setAttribute:', e);
+        }
+      } else {
+        // Для інших типів елементів
+        if (inputField.value !== undefined) {
+          inputField.value = messageText;
+        }
+        if (inputField.textContent !== undefined) {
+          inputField.textContent = messageText;
+        }
       }
-    });
-    console.log('Gemini: Відправлено всі події');
+      
+      console.log('Gemini: Встановлено значення та відправлено події');
+    }, 300);
   } catch (error) {
     console.error('Помилка при обробці Gemini:', error);
   }
@@ -353,44 +365,40 @@ function handleGeminiMessage(inputField, messageText) {
 // Обробник для Grok
 function handleGrokMessage(inputField, messageText) {
   try {
-    // Встановлюємо значення
+    // Очищаємо поле спочатку, щоб видалити будь-який авто-текст
     if (inputField.value !== undefined) {
-      inputField.value = messageText;
-    }
-    console.log('Grok: Встановлено значення');
-    
-    // Симулюємо події для Grok з більшою кількістю подій
-    const events = ['input', 'change', 'focus', 'keydown', 'keyup', 'blur', 'input'];
-    events.forEach((eventType, index) => {
+      inputField.value = '';
+      // Потім встановлюємо значення після короткої затримки
       setTimeout(() => {
-        try {
-          let event;
-          if (eventType.startsWith('key')) {
-            event = new KeyboardEvent(eventType, { 
-              key: eventType === 'keydown' ? 'a' : 'Enter',
-              bubbles: true,
-              cancelable: true
-            });
-          } else if (eventType === 'input') {
+        inputField.value = messageText;
+        
+        // Фокусуємося на полі вводу
+        inputField.focus();
+        
+        // Симулюємо події з короткими затримками
+        ['input', 'change', 'keydown'].forEach((eventType, index) => {
+          setTimeout(() => {
             try {
-              event = new InputEvent('input', { 
-                bubbles: true, 
-                data: messageText,
-                inputType: 'insertText'
-              });
-            } catch (e) {
-              event = new Event('input', { bubbles: true });
+              if (eventType === 'keydown') {
+                // Симулюємо натискання будь-якої клавіші для активації поля
+                inputField.dispatchEvent(new KeyboardEvent('keydown', { 
+                  key: 'a',
+                  bubbles: true,
+                  cancelable: true
+                }));
+              } else {
+                // Для інших подій використовуємо стандартні події
+                inputField.dispatchEvent(new Event(eventType, { bubbles: true }));
+              }
+            } catch (error) {
+              console.error(`Grok: Помилка при відправці події ${eventType}:`, error);
             }
-          } else {
-            event = new Event(eventType, { bubbles: true });
-          }
-          inputField.dispatchEvent(event);
-        } catch (error) {
-          console.error(`Grok: Помилка при відправці події ${eventType}:`, error);
-        }
-      }, index * 50); // Невелика затримка між подіями
-    });
-    console.log('Grok: Відправлено всі події');
+          }, index * 100);
+        });
+        
+        console.log('Grok: Відправлено всі події');
+      }, 200);
+    }
   } catch (error) {
     console.error('Помилка при обробці Grok:', error);
   }
@@ -518,66 +526,47 @@ function isElementVisible(element) {
 // Обробник для DeepSeek
 function handleDeepSeekMessage(inputField, messageText) {
   try {
-    // Встановлюємо значення для textarea
+    // Очищаємо поле спочатку
     if (inputField.value !== undefined) {
-      inputField.value = messageText;
+      inputField.value = '';
     }
     if (inputField.tagName.toLowerCase() === 'div' && inputField.getAttribute('contenteditable') === 'true') {
-      inputField.textContent = messageText;
+      inputField.textContent = '';
     }
     
-    console.log('DeepSeek: Встановлено значення');
+    // Фокусуємо на полі вводу
+    inputField.focus();
     
-    // Симулюємо більше різноманітних подій для DeepSeek
-    const events = ['focus', 'click', 'input', 'change', 'keydown', 'keypress', 'input'];
-    events.forEach((eventType, index) => {
-      setTimeout(() => {
-        try {
-          if (eventType === 'input') {
+    // Використовуємо тільки один метод для встановлення значення з затримкою
+    setTimeout(() => {
+      if (inputField.value !== undefined) {
+        inputField.value = messageText;
+        
+        // Відправляємо тільки необхідні події з більшими затримками
+        ['input', 'change'].forEach((eventType, index) => {
+          setTimeout(() => {
             try {
-              inputField.dispatchEvent(new InputEvent('input', { 
-                bubbles: true,
-                data: messageText,
-                inputType: 'insertText'
-              }));
-            } catch (e) {
-              try {
-                // Альтернативна спроба - просто event
-                const event = new Event('input', { bubbles: true, cancelable: true });
-                inputField.dispatchEvent(event);
-              } catch (err) {
-                console.error('Помилка при відправці input event:', err);
-              }
+              const event = new Event(eventType, { bubbles: true });
+              inputField.dispatchEvent(event);
+            } catch (error) {
+              console.error(`DeepSeek: Помилка при відправці події ${eventType}:`, error);
             }
-          } else if (eventType === 'keydown' || eventType === 'keypress') {
-            const event = new KeyboardEvent(eventType, { 
-              key: eventType === 'keydown' ? 'a' : 'Enter',
-              code: eventType === 'keydown' ? 'KeyA' : 'Enter',
-              keyCode: eventType === 'keydown' ? 65 : 13,
-              which: eventType === 'keydown' ? 65 : 13,
-              bubbles: true,
-              cancelable: true
-            });
-            inputField.dispatchEvent(event);
-          } else {
-            const event = new Event(eventType, { bubbles: true, cancelable: true });
-            inputField.dispatchEvent(event);
-          }
-        } catch (error) {
-          console.error(`DeepSeek: Помилка при відправці події ${eventType}:`, error);
+          }, index * 150);
+        });
+      } else if (inputField.tagName.toLowerCase() === 'div' && inputField.getAttribute('contenteditable') === 'true') {
+        inputField.textContent = messageText;
+        
+        // Для contenteditable елементів потрібні специфічні події
+        try {
+          const event = new InputEvent('input', { bubbles: true });
+          inputField.dispatchEvent(event);
+        } catch (e) {
+          console.error('DeepSeek: Помилка при відправці input event:', e);
         }
-      }, index * 100); // Збільшена затримка між подіями
-    });
-    
-    console.log('DeepSeek: Відправлено всі події');
-    
-    // Додаткова стратегія - вставка тексту через execCommand
-    try {
-      document.execCommand('insertText', false, messageText);
-      console.log('DeepSeek: Спробували додатковий метод execCommand');
-    } catch (e) {
-      console.log('DeepSeek: execCommand не спрацював:', e);
-    }
+      }
+      
+      console.log('DeepSeek: Встановлено значення і відправлено події');
+    }, 300);
   } catch (error) {
     console.error('Помилка при обробці DeepSeek:', error);
   }
