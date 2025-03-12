@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const statusMessage = document.getElementById('status-message');
   const chatTabsContainer = document.getElementById('chat-tabs');
   const noChatsMessage = document.getElementById('no-chats-message');
+  const selectAllButton = document.getElementById('select-all');
+  const selectNoneButton = document.getElementById('select-none');
   
   // Find open tabs with AI chats
   const tabs = await browser.tabs.query({});
@@ -147,4 +149,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       statusMessage.style.display = 'none';
     }, type === 'error' ? 15000 : 5000);
   }
+  
+  // Add event listeners for select all and deselect all buttons
+  selectAllButton.addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+    });
+  });
+  
+  selectNoneButton.addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+  });
 });
