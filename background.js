@@ -72,7 +72,8 @@ async function checkForOpenAIChats() {
     'chatgpt.com',
     'claude.ai',
     'gemini.google.com',
-    'grok.com'
+    'grok.com',
+    'chat.deepseek.com'
   ];
   
   const tabs = await browser.tabs.query({});

@@ -28,6 +28,12 @@ const CHAT_SELECTORS = {
     submitButton: 'button[aria-label="Send message"]',
     alternativeSubmitButton: 'button[type="submit"]',
     altInputField: 'textarea'
+  },
+  'chat.deepseek.com': {
+    inputField: 'textarea',
+    submitButton: 'button[type="submit"]',
+    alternativeSubmitButton: 'button[aria-label="Send message"]',
+    altInputField: 'div[contenteditable="true"]'
   }
 };
 
@@ -170,6 +176,9 @@ function injectMessageIntoChat(messageText) {
       } else if (chatType.includes('chat.openai.com') || chatType.includes('chatgpt.com')) {
         // Спеціальний підхід для ChatGPT
         handleChatGptMessage(inputField, messageText);
+      } else if (chatType === 'chat.deepseek.com') {
+        // Спеціальний підхід для DeepSeek
+        handleDeepSeekMessage(inputField, messageText);
       } else {
         // Для інших чатів, універсальний підхід
         handleGenericMessage(inputField, messageText);
@@ -182,6 +191,7 @@ function injectMessageIntoChat(messageText) {
         // Перевіряємо, чи кнопка submit активна і видима
         if (submitButton && !submitButton.disabled && isElementVisible(submitButton)) {
           console.log('Знайдено активну кнопку відправки, натискаємо...');
+          
           // Додаткова перевірка для ChatGPT
           if (chatType.includes('chatgpt') && submitButton.disabled) {
             console.log('Кнопка ChatGPT неактивна, спробуємо відправити через Enter');
@@ -191,17 +201,25 @@ function injectMessageIntoChat(messageText) {
             submitButton.focus();
             // Потім імітуємо клік через різні методи
             submitButton.click();
-            submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-            console.log('Кнопку натиснуто');
+            // Додаємо додаткові методи імітації кліка для більшої надійності
+            submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            submitButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+            submitButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+            console.log('Кнопку натиснуто кількома методами');
+            
+            // Додаткове натискання Enter для підстраховки
+            setTimeout(() => {
+              sendEnterKey(inputField);
+            }, 300);
           }
         } else {
           console.log('Кнопка відправки не знайдена або неактивна, спробуємо відправити через Enter');
           // Спробуємо відправити через Enter
           sendEnterKey(inputField);
         }
-      }, 800); // Збільшена затримка перед натисканням кнопки
+      }, 1000); // Збільшена затримка перед натисканням кнопки
       
-    }, 300); // Збільшена затримка перед фокусуванням та вставкою тексту
+    }, 500); // Збільшена затримка перед фокусуванням та вставкою тексту
     
     return { success: true };
   } catch (error) {
@@ -496,3 +514,72 @@ function isElementVisible(element) {
          element.offsetWidth > 0 && 
          element.offsetHeight > 0;
 }
+
+// Обробник для DeepSeek
+function handleDeepSeekMessage(inputField, messageText) {
+  try {
+    // Встановлюємо значення для textarea
+    if (inputField.value !== undefined) {
+      inputField.value = messageText;
+    }
+    if (inputField.tagName.toLowerCase() === 'div' && inputField.getAttribute('contenteditable') === 'true') {
+      inputField.textContent = messageText;
+    }
+    
+    console.log('DeepSeek: Встановлено значення');
+    
+    // Симулюємо більше різноманітних подій для DeepSeek
+    const events = ['focus', 'click', 'input', 'change', 'keydown', 'keypress', 'input'];
+    events.forEach((eventType, index) => {
+      setTimeout(() => {
+        try {
+          if (eventType === 'input') {
+            try {
+              inputField.dispatchEvent(new InputEvent('input', { 
+                bubbles: true,
+                data: messageText,
+                inputType: 'insertText'
+              }));
+            } catch (e) {
+              try {
+                // Альтернативна спроба - просто event
+                const event = new Event('input', { bubbles: true, cancelable: true });
+                inputField.dispatchEvent(event);
+              } catch (err) {
+                console.error('Помилка при відправці input event:', err);
+              }
+            }
+          } else if (eventType === 'keydown' || eventType === 'keypress') {
+            const event = new KeyboardEvent(eventType, { 
+              key: eventType === 'keydown' ? 'a' : 'Enter',
+              code: eventType === 'keydown' ? 'KeyA' : 'Enter',
+              keyCode: eventType === 'keydown' ? 65 : 13,
+              which: eventType === 'keydown' ? 65 : 13,
+              bubbles: true,
+              cancelable: true
+            });
+            inputField.dispatchEvent(event);
+          } else {
+            const event = new Event(eventType, { bubbles: true, cancelable: true });
+            inputField.dispatchEvent(event);
+          }
+        } catch (error) {
+          console.error(`DeepSeek: Помилка при відправці події ${eventType}:`, error);
+        }
+      }, index * 100); // Збільшена затримка між подіями
+    });
+    
+    console.log('DeepSeek: Відправлено всі події');
+    
+    // Додаткова стратегія - вставка тексту через execCommand
+    try {
+      document.execCommand('insertText', false, messageText);
+      console.log('DeepSeek: Спробували додатковий метод execCommand');
+    } catch (e) {
+      console.log('DeepSeek: execCommand не спрацював:', e);
+    }
+  } catch (error) {
+    console.error('Помилка при обробці DeepSeek:', error);
+  }
+}
+
