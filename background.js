@@ -19,8 +19,10 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 async function checkForOpenAIChats() {
   const aiDomains = [
     'chat.openai.com',
+    'chatgpt.com',
     'claude.ai',
-    'gemini.google.com'
+    'gemini.google.com',
+    'grok.com'
   ];
   
   const tabs = await browser.tabs.query({});

@@ -1,8 +1,9 @@
 // Визначаємо підтримувані AI-чати
 const AI_CHAT_URLS = {
-  'ChatGPT': 'https://chat.openai.com',
+  'ChatGPT': ['https://chat.openai.com', 'https://chatgpt.com'],
   'Claude': 'https://claude.ai',
-  'Gemini': 'https://gemini.google.com'
+  'Gemini': 'https://gemini.google.com',
+  'Grok': 'https://grok.com'
 };
 
 // При завантаженні popup
@@ -16,7 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Знаходимо відкриті вкладки з AI-чатами
   const tabs = await browser.tabs.query({});
   const aiChatTabs = tabs.filter(tab => {
-    return Object.values(AI_CHAT_URLS).some(url => tab.url.startsWith(url));
+    return Object.entries(AI_CHAT_URLS).some(([key, urls]) => {
+      if (Array.isArray(urls)) {
+        return urls.some(url => tab.url.startsWith(url));
+      } else {
+        return tab.url.startsWith(urls);
+      }
+    });
   });
   
   // Показуємо знайдені чати або повідомлення, якщо їх немає
@@ -26,7 +33,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Створюємо список чатів з чекбоксами
     aiChatTabs.forEach(tab => {
       const chatType = Object.keys(AI_CHAT_URLS).find(
-        key => tab.url.startsWith(AI_CHAT_URLS[key])
+        key => {
+          const urls = AI_CHAT_URLS[key];
+          if (Array.isArray(urls)) {
+            return urls.some(url => tab.url.startsWith(url));
+          } else {
+            return tab.url.startsWith(urls);
+          }
+        }
       ) || 'Невідомий AI-чат';
       
       const chatItem = document.createElement('div');
