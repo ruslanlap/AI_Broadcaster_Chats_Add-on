@@ -1,171 +1,172 @@
-# Configuring a Repl
+<div align="center">
 
-Every new repl comes with a `.replit` and a `replit.nix` file that let you configure your repl to do just about anything in any language!
+# 🔊 AI Chat Broadcaster
 
-### `replit.nix`
+[![Version](https://img.shields.io/badge/version-0.0.2-blue.svg)](https://github.com/yourusername/ai-chat-broadcaster/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Firefox](https://img.shields.io/badge/Firefox-Add--on-orange.svg)](https://addons.mozilla.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/yourusername/ai-chat-broadcaster/pulls)
 
-Every repl can install any package available on Nix, and support any number of languages in a single repl. You can search for a list of available packages [here](https://search.nixos.org/packages), as well as installing Replit's support for different languages by using the "Dependencies" pane in your repl, by clicking "Add new module".
+<p align="center">
+  <img src="data/icon384.png" alt="AI Chat Broadcaster" width="200">
+</p>
 
-The `replit.nix` file can look something like the example below. The `deps` array specifies which Nix packages you would like to be available in your environment. 
+**Send messages to multiple AI assistants simultaneously**
 
-```nix
-{ pkgs }: {
-  deps = [
-    pkgs.cowsay
-  ];
-}
+[Features](#-features) • 
+[Supported Platforms](#-supported-platforms) • 
+[Installation](#-installation) • 
+[Usage](#-usage) • 
+[Screenshots](#-screenshots) • 
+[Documentation](#-documentation) • 
+[Contributing](#-contributing) • 
+[License](#-license)
+
+</div>
+
+## ✨ Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>Multi-platform Broadcasting</h3>
+      <p>Send the same prompt to multiple AI assistants with one click, saving time and ensuring consistent responses</p>
+    </td>
+    <td width="50%">
+      <h3>Selective Sending</h3>
+      <p>Choose which AI chats receive your message with simple checkboxes for maximum flexibility</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>Status Feedback</h3>
+      <p>Get clear feedback on message delivery success with visual indicators for each chat</p>
+    </td>
+    <td width="50%">
+      <h3>Multilingual Support</h3>
+      <p>Available in English and Ukrainian with an easy language switcher</p>
+    </td>
+  </tr>
+</table>
+
+## 🤖 Supported Platforms
+
+| Platform | Status | Website | Notes |
+|----------|--------|---------|-------|
+| <img src="https://img.shields.io/badge/ChatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white" alt="ChatGPT" width="100"/> | ✅ Active | [chat.openai.com](https://chat.openai.com) | Full support for free and Plus accounts |
+| <img src="https://img.shields.io/badge/Claude-8A2BE2?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude" width="100"/> | ✅ Active | [claude.ai](https://claude.ai) | Works with all Claude models |
+| <img src="https://img.shields.io/badge/Grok-00BFFF?style=for-the-badge&logo=x&logoColor=white" alt="Grok" width="100"/> | ✅ Active | [grok.com](https://grok.com) | Supports X Premium subscribers |
+| <img src="https://img.shields.io/badge/DeepSeek-FF6B00?style=for-the-badge&logoColor=white" alt="DeepSeek" width="100"/> | ✅ Active | [chat.deepseek.com](https://chat.deepseek.com) | Compatible with all models |
+| <img src="https://img.shields.io/badge/Mistral-5E35B1?style=for-the-badge&logoColor=white" alt="Mistral" width="100"/> | ✅ Active | [chat.mistral.ai](https://chat.mistral.ai) | Works with free and paid tiers |
+
+## 📥 Installation
+
+<details>
+<summary><b>Firefox Browser</b></summary>
+
+1. Download the latest release from the [Releases page](https://github.com/yourusername/ai-chat-broadcaster/releases)
+2. Open Firefox and navigate to `about:addons`
+3. Click the gear icon and select "Install Add-on From File..."
+4. Select the downloaded `.xpi` file
+5. Grant the necessary permissions when prompted
+</details>
+
+<details>
+<summary><b>Development Build</b></summary>
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ai-chat-broadcaster.git
+
+# Navigate to the directory
+cd ai-chat-broadcaster
+
+# Install web-ext (if not already installed)
+npm install --global web-ext
+
+# Run the extension in Firefox
+web-ext run
 ```
-### Learn More About Nix
+</details>
 
-If you'd like to learn more about Nix, here are some great resources:
+## 🚀 Usage
 
-#### Written Guides
-- [Getting started with Nix](https://docs.replit.com/programming-ide/nix-on-replit) — Our own getting started guide
-- [Building with Nix on Replit](https://docs.replit.com/tutorials/python/build-with-nix) — Deploy a production web stack on Replit with Nix
-- [Nix Pills](https://nixos.org/guides/nix-pills/) — Guided introduction to Nix
-- [Nix Package Manager Guide](https://nixos.org/manual/nix/stable/) — A comprehensive guide of the Nix Package Manager
-- [A tour of Nix](https://nixcloud.io/tour) — Learn the nix language itself
+<p align="center">
+  <img src="data/screen.png" alt="How to Use" width="600">
+</p>
 
-#### Video Guides
-- [Nixology](https://www.youtube.com/playlist?list=PLRGI9KQ3_HP_OFRG6R-p4iFgMSK1t5BHs) — A series of videos introducing Nix in a practical way
-- [Taking the Nix pill](https://www.youtube.com/watch?v=QwLWIy2KleE) — An introduction to what Nix is, how it works, and a walkthrough of publishing several new languages to Replit within an hour.
-- [Nix: A Deep Dive](https://www.youtube.com/watch?v=TsZte_9GfPE) — A deep dive on Nix: what Nix is, why you should use it, and how it works.
+<details>
+<summary><b>Step-by-step guide</b></summary>
 
+1. **Open AI Chats**: Log into your accounts on supported platforms and open them in separate tabs
+2. **Click the Extension Icon**: Click on the AI Chat Broadcaster icon in your browser toolbar
+3. **Enter Your Message**: Type the text you want to send to all chats
+4. **Select Chats**: Check the AI chats you want to send your message to
+5. **Send**: Click the "Send to all selected chats" button
+</details>
 
-### `.replit`
+### 💡 Pro Tips
 
-The `.replit` file allows you to configure many options for your repl, most basic of which is the `run` command.
+- For complex prompts, prepare your text in a text editor first
+- Use the "Select All" button to quickly check all open chats
+- Monitor the status messages to ensure successful delivery
 
-Check out how to use the `.replit` file to configure a repl to enable [Clojure](https://clojure.org):
+## 📸 Screenshots
 
-<iframe width="640" height="400" style="margin-bottom: 10px;" src="https://www.loom.com/embed/cbe1f74399c546c38e0c1871893816c5" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<div align="center">
+  <img src="data/screen.png" alt="Screenshot" width="600">
+</div>
 
-`.replit` files follow the [toml configuration format](https://learnxinyminutes.com/docs/toml/) and look something like this:
+## 📚 Documentation
 
-```toml
-# The command that is executed when the run button is clicked.
-run = ["cargo", "run"]
+### Architecture
 
-# The default file opened in the editor.
-entrypoint = "src/main.rs"
+The extension is built using standard web technologies and follows a modular architecture:
 
-# Setting environment variables
-[env]
-FOO="foo"
-
-# Packager configuration for the Universal Package Manager
-# See https://github.com/replit/upm for supported languages.
-[packager]
-language = "rust"
-
-  [packager.features]
-  # Enables the package search sidebar
-  packageSearch = true
-  # Enabled package guessing
-  guessImports = false
-
-# Per language configuration: language.<lang name> 
-[languages.rust]
-# The glob pattern to match files for this programming language
-pattern = "**/*.rs"
-
-    # LSP configuration for code intelligence
-    [languages.rust.languageServer]
-    start = ["rust-analyzer"]
+```
+AI Chat Broadcaster/
+├── manifest.json     # Extension configuration
+├── background.js     # Background script for tab management
+├── content.js        # Content script for chat interaction
+├── popup.html/js     # User interface
+├── welcome-*.html    # Onboarding pages
+└── icons/            # Extension icons
 ```
 
-In the code above, the strings in the array assigned to `run` are executed in order in the shell whenever you hit the "Run" button. 
+### Technical Implementation
 
-The `language` configuration option helps the IDE understand how to provide features like [packaging](https://blog.replit.com/upm) and [code intelligence](https://blog.replit.com/intel).
+- **JavaScript**: Core functionality for message broadcasting
+- **HTML/CSS**: User interface with responsive design
+- **Browser Extension API**: For cross-tab communication and content script injection
 
-And the `[languages.rust]` `pattern` option is configured so that all files ending with `.rs` are treated as Rust files. The name is user-defined and doesn't have any special meaning, we could have used `[languages.rs]` instead.
+#### Key Components
 
-We can now set up a language server specifically for Rust. Which is what we do with the next configuration option: `[languages.rust.languageServer]`. [Language servers](https://microsoft.github.io/language-server-protocol/#:~:text=A%20Language%20Server%20is%20meant,servers%20and%20development%20tools%20communicate.) add smart features to your editor like code intelligence, go-to-definition, and documentation on hover.
+- **content.js**: Handles message injection into different chat interfaces
+- **background.js**: Manages tab communication and diagnostics
+- **popup.html/js**: Provides the user control panel
 
-Since repls are fully configurable, you're not limited to just one language. For example, you could install Clojure and its language server using `replit.nix`, add a `[languages.clojure]` configuration option to the above `.replit` file that matched all Clojure files and have code intelligence enabled for both languages in the same repl.
+## 🤝 Contributing
 
-### `.replit` reference
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-A `Command` can either be a string or a list of strings. If the `Command` is a string (`"node index.js"`), it will be executed via `sh -c "<Command>"`. If the Command is a list of strings (`["node", "index.js"]`), it will be directly executed with the list of strings passed as arguments. When possible, it is preferred to pass a list of strings.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- `run`
-  - **Type:** `Command`
-  - **Description:** The command to run the repl.
-- `entrypoint`
-  - **Type:**  `string`
-  - **Description:** The name of the main file including the extension. This is the file that will be run, and shown by default when opening the editor.
-- `compile`
-  - **Type:** `Command`
-  - **Description:** The shell command to compile the repl before the `run` command. Primarily relevant for compiled languages like C, C++, and Java, or for preprocessing commands or advanced workflows.
-- `language`
-  - **Type:** `string`
-  - **Description:** Reserved. During a GitHub import, this tells the workspace which language should be used when creating the repl. For new repls, this option will always be Nix, so this field should generally not be touched.
-- `[env]`
-  - **Description:** Set environment variables. Don't put secrets here—use the Secrets tab in the left sidebar.
-  - **Example:** `VIRTUAL_ENV = "/home/runner/${REPL_SLUG}/venv"`
-- `interpreter`
-  - **Description:** Specifies the interpreter, which should be a compliant [prybar binary](https://github.com/replit/prybar).
-  - `command`
-    - **Type:** `[string]`
-    - **Description:** This is the command that will be run to start the interpreter. It has higher precedence than the `run` command (i.e. `interpreter` command will run instead of the `run` command).
-  - `prompt`
-    - **Type:** `[byte]`
-    - **Description:** This is the prompt used to detect running state, if unspecified it defaults to `[0xEE, 0xA7]`.
-- `[unitTest]`
-  - Enables unit testing to the repl.
-  - `language`
-      - **Type:** `string`
-      - **Description:** The language you want the unit tests to run. Supported strings: `java`, `python`, and `nodejs`.
-- `[packager]`
-  - **Description:** Package management configuration. Learn more about installing packages [here](https://docs.replit.com/repls/packages/#DirectImports).
-  - `afterInstall`
-    - **Type:** `Command`
-    - **Description:** The command that is executed after a new package is installed.
-  - `ignoredPaths`
-    - **Type:** `[string]`
-    - **Description:** List of paths to ignore while attempting to guess packages.
-  - `ignoredPackages`
-    - **Type:** `[string]`
-    - **Description:** List of modules to never attempt to guess a package for, when installing packages.
-  - `language`
-    - **Type:** `string`
-    - **Description:** Specifies the language to use for package operations. See available languages in the [Universal Package Manager](https://github.com/replit/upm) repository.
-  - `[packager.features]`
-    - **Description:** UPM features that are supported by the specified languages.
-      - `packageSearch`
-        - **Type:** Boolean
-        - **Description:** When set to `true`, enables a package search panel in the sidebar.
-      - `guessImports`
-        - **Type:** Boolean
-        - **Description:** When set to `true`, UPM will attempt to guess which packages need to be installed prior to running the repl.
-- `[languages.<language name>]`
-  - **Description:** Per-language configuration. The language name has no special meaning other than to allow multiple languages to be configured at once.
-  - `pattern`
-    - **Type:** `string`
-    - **Description:** A [glob](https://en.wikipedia.org/wiki/Glob_(programming)) used to identify which files belong to this language configuration (`**/*.js`)
-  - `syntax`
-    - **Type:** `string`
-    - **Description:** The language to use for syntax highlighting.
-  - `[languages.<language name>.languageServer]`
-    - **Description:** Configuration for setting up [LSP](https://microsoft.github.io/language-server-protocol/) for this language. This allows for code intelligence (autocomplete, underlined errors, etc...).
-    - `start`
-      - **Type:** `Command`
-      - **Description:** The command used to start the LSP server for the specified language.
-- `[nix]`
-  - **Description:** Where you specify a [Nix channel](https://nixos.wiki/wiki/Nix_channels).
-  - `channel`
-    - **Type:** `string`
-    - **Description:** A nix channel id.
-- `[debugger]`
-  - **Description:** Advanced users only. See field types & docstrings [here](https://gist.github.com/Bardia95/98987c69c6970b1bb0698b863e2a84de#file-dot-replit-debugger-config-go), and in the advanced section below.
+## 📝 License
 
-### Example configurations
-#### Beginner
-##### [LaTeX](https://replit.com/@ZachAtReplit/LaTeX?v=1#.replit)
-##### [Clojure](https://replit.com/@replit/Clojure?v=1#.replit)
-#### Advanced
-##### [Python](https://replit.com/@replit/Python?v=1)
-##### [HTML, CSS, JS](https://replit.com/@replit/HTML-CSS-JS?v=1#.replit)
-##### [Java](https://replit.com/@replit/Java-Beta?v=1#.replit)
-##### [Node.js](https://replit.com/@replit/Nodejs?v=1#.replit)
-##### [C++](https://replit.com/@replit/CPlusPlus?v=1)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgements
+
+- Icons from [Font Awesome](https://fontawesome.com)
+- UI design inspired by [Dracula Theme](https://draculatheme.com)
+- Special thanks to all contributors
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/ruslanlap">ruslanlap</a></sub>
+</div>
