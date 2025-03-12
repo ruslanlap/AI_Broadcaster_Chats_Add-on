@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
   
-  // Показуємо знайдені чати або повідомлення, якщо їх немає
+  // Display found chats or message if none
   if (aiChatTabs.length > 0) {
     noChatsMessage.style.display = 'none';
     
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const message = messageInput.value.trim();
     
     if (!message) {
-      showStatus('Будь ласка, введіть повідомлення для відправки', 'error');
+      showStatus('Please enter a message to send', 'error');
       return;
     }
     
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const selectedCheckboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]:checked');
     
     if (selectedCheckboxes.length === 0) {
-      showStatus('Будь ласка, виберіть хоча б один чат для відправки', 'error');
+      showStatus('Please select at least one chat to send to', 'error');
       return;
     }
     
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const tabId = parseInt(checkbox.dataset.tabId);
       // Значно збільшуємо затримку між відправками в різні чати
       return new Promise(resolve => setTimeout(() => {
-        console.log(`Відправляємо повідомлення у вкладку ${tabId}...`);
+        console.log(`Sending message to tab ${tabId}...`);
         
         // Спочатку активуємо вкладку, щоб гарантувати, що вона в фокусі
         browser.tabs.update(tabId, { active: true }).then(() => {
@@ -115,11 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const errorCount = results.length - successCount;
     
     if (errorCount === 0) {
-      showStatus(`Успішно відправлено повідомлення в ${successCount} чат(ів)!`, 'success');
+      showStatus(`Successfully sent message to ${successCount} chat(s)!`, 'success');
     } else if (successCount === 0) {
-      showStatus(`Не вдалося відправити повідомлення в жоден чат. Перевірте консоль для деталей.`, 'error');
+      showStatus(`Failed to send message to any chat. Check console for details.`, 'error');
     } else {
-      showStatus(`Відправлено в ${successCount} чат(ів), помилка в ${errorCount} чат(ах).`, 'error');
+      showStatus(`Sent to ${successCount} chat(s), error in ${errorCount} chat(s).`, 'error');
     }
   });
   

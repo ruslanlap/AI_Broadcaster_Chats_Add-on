@@ -120,51 +120,51 @@ function injectMessageIntoChat(messageText) {
   if (!inputField) {
     if (selectors.alternativeInputField) {
       inputField = document.querySelector(selectors.alternativeInputField);
-      console.log('Використовуємо альтернативне поле вводу');
+      console.log('Using alternative input field');
     }
     
     if (!inputField && selectors.altInputField) {
       inputField = document.querySelector(selectors.altInputField);
-      console.log('Використовуємо другий альтернативний селектор поля вводу');
+      console.log('Using second alternative input field selector');
     }
   }
   
   if (!submitButton) {
     if (selectors.alternativeSubmitButton) {
       submitButton = document.querySelector(selectors.alternativeSubmitButton);
-      console.log('Використовуємо альтернативну кнопку відправки');
+      console.log('Using alternative submit button');
     }
     
     if (!submitButton && selectors.altSubmitButton) {
       submitButton = document.querySelector(selectors.altSubmitButton);
-      console.log('Використовуємо другий альтернативний селектор кнопки відправки');
+      console.log('Using second alternative submit button selector');
     }
   }
   
   if (!inputField) {
-    console.error('Не знайдено поле вводу для', chatType);
+    console.error('Input field not found for', chatType);
     // Додаткова спроба знайти будь-яке можливе поле вводу
     const possibleInputs = document.querySelectorAll('textarea, [contenteditable="true"], div[role="textbox"], input[type="text"]');
     if (possibleInputs.length > 0) {
       inputField = possibleInputs[0];
-      console.log('Знайдено можливе поле вводу:', inputField);
+      console.log('Found possible input field:', inputField);
     } else {
-      return { success: false, error: 'Не знайдено поле вводу' };
+      return { success: false, error: 'Input field not found' };
     }
   }
   
   if (!submitButton) {
-    console.warn('Не знайдено кнопку відправки для', chatType, '- спробуємо використати Enter');
+    console.warn('Submit button not found for', chatType, '- trying to use Enter');
     // Спробуємо знайти будь-яку кнопку відправки
     const possibleButtons = document.querySelectorAll('button[type="submit"], button[aria-label*="Send"], button[aria-label*="send"], button:has(svg)');
     if (possibleButtons.length > 0) {
       submitButton = possibleButtons[0];
-      console.log('Знайдено можливу кнопку відправки:', submitButton);
+      console.log('Found possible submit button:', submitButton);
     }
   }
   
   // Показуємо, що ми намагаємось відправити повідомлення
-  console.log(`Відправляємо повідомлення в ${chatType}`);
+  console.log(`Sending message to ${chatType}`);
   
   try {
     // Очищаємо поле вводу перед вставкою нового тексту
@@ -202,15 +202,15 @@ function injectMessageIntoChat(messageText) {
       
       // Додаємо збільшену затримку перед спробою натиснути кнопку
       setTimeout(() => {
-        console.log('Спроба відправити повідомлення...');
+        console.log('Attempting to send message...');
         
         // Перевіряємо, чи кнопка submit активна і видима
         if (submitButton && !submitButton.disabled && isElementVisible(submitButton)) {
-          console.log('Знайдено активну кнопку відправки, натискаємо...');
+          console.log('Found active submit button, clicking...');
           
           // Додаткова перевірка для ChatGPT
           if (chatType.includes('chatgpt') && submitButton.disabled) {
-            console.log('Кнопка ChatGPT неактивна, спробуємо відправити через Enter');
+            console.log('ChatGPT button inactive, trying to send with Enter');
             sendEnterKey(inputField);
           } else {
             // Спочатку фокусуємося на кнопці
@@ -221,7 +221,7 @@ function injectMessageIntoChat(messageText) {
             submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
             submitButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
             submitButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-            console.log('Кнопку натиснуто кількома методами');
+            console.log('Button clicked using multiple methods');
             
             // Додаткове натискання Enter для підстраховки
             setTimeout(() => {
@@ -229,7 +229,7 @@ function injectMessageIntoChat(messageText) {
             }, 300);
           }
         } else {
-          console.log('Кнопка відправки не знайдена або неактивна, спробуємо відправити через Enter');
+          console.log('Submit button not found or inactive, trying to send with Enter');
           // Спробуємо відправити через Enter
           sendEnterKey(inputField);
         }

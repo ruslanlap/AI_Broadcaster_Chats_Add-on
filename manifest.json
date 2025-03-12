@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "AI Chat Broadcaster",
   "version": "1.0",
-  "description": "Відправляє текст одночасно в кілька AI-чатів",
+  "description": "Sends text simultaneously to multiple AI chats",
   "permissions": [
     "activeTab",
     "tabs",

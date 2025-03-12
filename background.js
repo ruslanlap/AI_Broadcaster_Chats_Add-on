@@ -7,11 +7,11 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'logEvent') {
     // Детальне логування з часовою міткою
     const timestamp = new Date().toLocaleTimeString();
-    console.log(`[${timestamp}] Подія з розширення:`, message.data);
+    console.log(`[${timestamp}] Extension event:`, message.data);
     
     // Якщо це помилка, показуємо детальніше в консолі
     if (message.data && message.data.type === 'error') {
-      console.error(`[${timestamp}] ПОМИЛКА:`, message.data.message);
+      console.error(`[${timestamp}] ERROR:`, message.data.message);
       
       // Можна додати збереження помилок для подальшого аналізу
       const errors = JSON.parse(localStorage.getItem('aiChatErrors') || '[]');
