@@ -66,13 +66,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Для кожної вибраної вкладки відправляємо повідомлення
     const sendPromises = Array.from(selectedCheckboxes).map(checkbox => {
       const tabId = parseInt(checkbox.dataset.tabId);
-      return browser.tabs.sendMessage(tabId, {
-        action: 'sendMessage',
-        message: message
-      }).catch(error => {
-        console.error(`Помилка при відправці в tab ${tabId}:`, error);
-        return { tabId, success: false, error: error.message };
-      });
+      // Додаємо затримку між відправками в різні чати
+      return new Promise(resolve => setTimeout(() => {
+        browser.tabs.sendMessage(tabId, {
+          action: 'sendMessage',
+          message: message
+        }).then(response => {
+          console.log(`Успішно відправлено в tab ${tabId}`);
+          resolve(response || { success: true });
+        }).catch(error => {
+          console.error(`Помилка при відправці в tab ${tabId}:`, error);
+          resolve({ tabId, success: false, error: error.message });
+        });
+      }, 100)); // Затримка 100мс між відправками
     });
     
     // Чекаємо завершення всіх відправок

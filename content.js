@@ -65,27 +65,52 @@ function injectMessageIntoChat(messageText) {
   if (chatType === 'claude.ai') {
     // Claude використовує ProseMirror - спеціальний редактор
     inputField.focus();
-    // Симулюємо ввід тексту
+    // Симулюємо ввід тексту через paste event
     const setText = function(element, text) {
-      const dataTransfer = new DataTransfer();
-      dataTransfer.setData('text/plain', text);
-      
-      element.dispatchEvent(new ClipboardEvent('paste', {
-        clipboardData: dataTransfer,
-        bubbles: true,
-        cancelable: true
-      }));
+      try {
+        // Спробуємо метод 1: використання DataTransfer
+        const dataTransfer = new DataTransfer();
+        dataTransfer.setData('text/plain', text);
+        
+        element.dispatchEvent(new ClipboardEvent('paste', {
+          clipboardData: dataTransfer,
+          bubbles: true,
+          cancelable: true
+        }));
+      } catch (error) {
+        console.log('Помилка при першому методі вставки: ', error);
+        // Спробуємо метод 2: використання document.execCommand
+        // Зосередитись на елементі
+        element.focus();
+        // Спробувати вставити через execCommand
+        document.execCommand('insertText', false, text);
+      }
     };
     
     setText(inputField, messageText);
+  } else if (chatType === 'gemini.google.com') {
+    // Для Gemini специфічний підхід
+    inputField.focus();
+    inputField.value = messageText;
+    
+    // Симулюємо події для Gemini
+    inputField.dispatchEvent(new Event('input', { bubbles: true }));
+    inputField.dispatchEvent(new Event('change', { bubbles: true }));
+    // Додаткова подія для Gemini
+    inputField.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
   } else {
-    // Для інших чатів, які використовують стандартні textarea/input
+    // Для ChatGPT та інших чатів, які використовують стандартні textarea/input
     // Встановлюємо значення та симулюємо події, щоб чат розпізнав зміни
     inputField.value = messageText;
     
-    // Симулюємо події, щоб активувати будь-які слухачі подій
+    // Симулюємо всі можливі події, щоб активувати будь-які слухачі
+    inputField.dispatchEvent(new Event('focus', { bubbles: true }));
     inputField.dispatchEvent(new Event('input', { bubbles: true }));
     inputField.dispatchEvent(new Event('change', { bubbles: true }));
+    // Для ChatGPT може знадобитись keypress подія
+    if (chatType === 'chat.openai.com') {
+      inputField.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+    }
   }
   
   // Перевіряємо, чи кнопка submit активна (для деяких чатів)

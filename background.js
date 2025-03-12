@@ -40,7 +40,7 @@ browser.runtime.onInstalled.addListener(async (details) => {
     if (!hasAIChats) {
       // Можна показати повідомлення або відкрити сторінку з інструкціями
       browser.tabs.create({
-        url: 'welcome.html'
+        url: 'welcome-uk.html'
       });
     }
   }
