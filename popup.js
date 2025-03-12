@@ -152,14 +152,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Add event listeners for select all and deselect all buttons
   selectAllButton.addEventListener('click', () => {
+    console.log("Select All clicked");
     const checkboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]');
+    console.log(`Found ${checkboxes.length} checkboxes`);
     checkboxes.forEach(checkbox => {
       checkbox.checked = true;
     });
   });
   
   selectNoneButton.addEventListener('click', () => {
+    console.log("Deselect All clicked");
     const checkboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]');
+    console.log(`Found ${checkboxes.length} checkboxes`);
     checkboxes.forEach(checkbox => {
       checkbox.checked = false;
     });
