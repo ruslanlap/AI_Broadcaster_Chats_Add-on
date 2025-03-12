@@ -1,33 +1,34 @@
-// Фоновий скрипт для додаткової функціональності
 
-// Слухаємо повідомлення від popup.js або content.js
+// Background script for additional functionality
+
+// Listen for messages from popup.js or content.js
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // Обробка різних типів повідомлень
+  // Handle different message types
   
   if (message.action === 'logEvent') {
-    // Детальне логування з часовою міткою
+    // Detailed logging with timestamp
     const timestamp = new Date().toLocaleTimeString();
     console.log(`[${timestamp}] Extension event:`, message.data);
     
-    // Якщо це помилка, показуємо детальніше в консолі
+    // If this is an error, show more details in console
     if (message.data && message.data.type === 'error') {
       console.error(`[${timestamp}] ERROR:`, message.data.message);
       
-      // Можна додати збереження помилок для подальшого аналізу
+      // Can add error saving for later analysis
       const errors = JSON.parse(localStorage.getItem('aiChatErrors') || '[]');
       errors.push({
         timestamp: new Date().toISOString(),
         message: message.data.message,
         sender: sender.tab ? `Tab ${sender.tab.id}: ${sender.tab.url}` : 'popup'
       });
-      // Зберігаємо останні 20 помилок
+      // Save last 20 errors
       localStorage.setItem('aiChatErrors', JSON.stringify(errors.slice(-20)));
     }
     
     sendResponse({ received: true });
   }
   
-  // Додано функціональність для отримання діагностичної інформації
+  // Added functionality for getting diagnostic information
   if (message.action === 'getDiagnostics') {
     const diagnosticInfo = {
       browserInfo: navigator.userAgent,
@@ -37,16 +38,16 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse(diagnosticInfo);
   }
   
-  // Додано функціональність для підготовки вкладки
+  // Added functionality for preparing tab
   if (message.action === 'prepareTab') {
     const tabId = message.tabId;
     
-    // Переконуємося, що вкладка готова до роботи
+    // Make sure tab is ready to work
     browser.tabs.get(tabId).then(tab => {
       if (tab.status === 'complete') {
         sendResponse({ status: 'ready' });
       } else {
-        // Якщо вкладка не повністю завантажена, чекаємо
+        // If tab is not fully loaded, wait
         setTimeout(() => {
           browser.tabs.get(tabId).then(updatedTab => {
             sendResponse({ status: updatedTab.status === 'complete' ? 'ready' : 'waiting' });
@@ -59,13 +60,13 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ status: 'error', error: err.message });
     });
     
-    return true; // Для асинхронної відповіді
+    return true; // For async response
   }
   
-  return true; // Для асинхронної відповіді
+  return true; // For async response
 });
 
-// Функція для перевірки наявності відкритих чатів
+// Function to check for open AI chats
 async function checkForOpenAIChats() {
   const aiDomains = [
     'chat.openai.com',
@@ -85,16 +86,16 @@ async function checkForOpenAIChats() {
   return aiTabs.length > 0;
 }
 
-// Необов'язково: можна додати обробник встановлення розширення
+// Optional: can add handler for extension installation
 browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
-    // При першому встановленні розширення
+    // On first installation of extension
     const hasAIChats = await checkForOpenAIChats();
     
     if (!hasAIChats) {
-      // Можна показати повідомлення або відкрити сторінку з інструкціями
+      // Can show message or open instructions page
       browser.tabs.create({
-        url: 'welcome-uk.html'
+        url: 'welcome-en.html'
       });
     }
   }

@@ -1,4 +1,5 @@
-// Визначаємо підтримувані AI-чати
+
+// Define supported AI chats
 const AI_CHAT_URLS = {
   'ChatGPT': ['https://chat.openai.com', 'https://chatgpt.com'],
   'Claude': 'https://claude.ai',
@@ -7,7 +8,7 @@ const AI_CHAT_URLS = {
   'DeepSeek': 'https://chat.deepseek.com'
 };
 
-// При завантаженні popup
+// When popup loads
 document.addEventListener('DOMContentLoaded', async () => {
   const messageInput = document.getElementById('message-input');
   const sendButton = document.getElementById('send-button');
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const chatTabsContainer = document.getElementById('chat-tabs');
   const noChatsMessage = document.getElementById('no-chats-message');
   
-  // Знаходимо відкриті вкладки з AI-чатами
+  // Find open tabs with AI chats
   const tabs = await browser.tabs.query({});
   const aiChatTabs = tabs.filter(tab => {
     return Object.entries(AI_CHAT_URLS).some(([key, urls]) => {
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (aiChatTabs.length > 0) {
     noChatsMessage.style.display = 'none';
     
-    // Створюємо список чатів з чекбоксами
+    // Create list of chats with checkboxes
     aiChatTabs.forEach(tab => {
       const chatType = Object.keys(AI_CHAT_URLS).find(
         key => {
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return tab.url.startsWith(urls);
           }
         }
-      ) || 'Невідомий AI-чат';
+      ) || 'Unknown AI Chat';
       
       const chatItem = document.createElement('div');
       chatItem.className = 'chat-item';
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
   
-  // Обробник кнопки відправки
+  // Send button handler
   sendButton.addEventListener('click', async () => {
     const message = messageInput.value.trim();
     
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     
-    // Отримуємо вибрані вкладки
+    // Get selected tabs
     const selectedCheckboxes = document.querySelectorAll('#chat-tabs input[type="checkbox"]:checked');
     
     if (selectedCheckboxes.length === 0) {
@@ -78,39 +79,39 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     
-    // Для кожної вибраної вкладки відправляємо повідомлення з більшою затримкою між відправками
+    // For each selected tab, send message with increased delay between sends
     const sendPromises = Array.from(selectedCheckboxes).map((checkbox, index) => {
       const tabId = parseInt(checkbox.dataset.tabId);
-      // Значно збільшуємо затримку між відправками в різні чати
+      // Significantly increase delay between sends to different chats
       return new Promise(resolve => setTimeout(() => {
         console.log(`Sending message to tab ${tabId}...`);
         
-        // Спочатку активуємо вкладку, щоб гарантувати, що вона в фокусі
+        // First activate tab to ensure it's in focus
         browser.tabs.update(tabId, { active: true }).then(() => {
-          // Збільшуємо затримку після активації вкладки
+          // Increase delay after tab activation
           setTimeout(() => {
             browser.tabs.sendMessage(tabId, {
               action: 'sendMessage',
               message: message
             }).then(response => {
-              console.log(`Успішно відправлено в tab ${tabId}:`, response);
+              console.log(`Successfully sent to tab ${tabId}:`, response);
               resolve(response || { success: true });
             }).catch(error => {
-              console.error(`Помилка при відправці в tab ${tabId}:`, error);
-              resolve({ tabId, success: false, error: error.message || "Невідома помилка" });
+              console.error(`Error sending to tab ${tabId}:`, error);
+              resolve({ tabId, success: false, error: error.message || "Unknown error" });
             });
-          }, 2000); // Збільшена затримка після активації вкладки до 2 секунд
+          }, 2000); // Increased delay after tab activation to 2 seconds
         }).catch(error => {
-          console.error(`Помилка при активації вкладки ${tabId}:`, error);
-          resolve({ tabId, success: false, error: "Помилка активації вкладки" });
+          console.error(`Error activating tab ${tabId}:`, error);
+          resolve({ tabId, success: false, error: "Tab activation error" });
         });
-      }, index * 3000)); // Значно збільшена затримка між відправками (3000мс на кожну вкладку)
+      }, index * 3000)); // Significantly increased delay between sends (3000ms per tab)
     });
     
-    // Чекаємо завершення всіх відправок
+    // Wait for all sends to complete
     const results = await Promise.all(sendPromises);
     
-    // Перевіряємо результати
+    // Check results
     const successCount = results.filter(result => result.success !== false).length;
     const errorCount = results.length - successCount;
     
@@ -123,13 +124,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
-  // Функція показу статусу з можливістю відображення деталей
+  // Function to show status with option to display details
   function showStatus(message, type) {
     statusMessage.textContent = message;
     statusMessage.className = `status ${type}`;
     statusMessage.style.display = 'block';
     
-    // При помилці надсилаємо детальну інформацію в фоновий скрипт для логування
+    // When error occurs, send detailed info to background script for logging
     if (type === 'error') {
       browser.runtime.sendMessage({
         action: 'logEvent',
@@ -138,10 +139,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           message: message,
           timestamp: new Date().toISOString()
         }
-      }).catch(err => console.error('Помилка логування:', err));
+      }).catch(err => console.error('Logging error:', err));
     }
     
-    // Автоматично ховаємо через 15 секунд для помилок, 5 секунд для успіху
+    // Automatically hide after 15 seconds for errors, 5 seconds for success
     setTimeout(() => {
       statusMessage.style.display = 'none';
     }, type === 'error' ? 15000 : 5000);
