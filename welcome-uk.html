@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <title>Ласкаво просимо до AI Chat Broadcaster</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #0060df;
+      border-bottom: 2px solid #0060df;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h2 {
+      color: #0060df;
+      margin-top: 30px;
+    }
+    .step {
+      background-color: white;
+      border-left: 4px solid #0060df;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .step-number {
+      display: inline-block;
+      background-color: #0060df;
+      color: white;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .note {
+      background-color: #fff4e5;
+      border-left: 4px solid #ff9400;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #0060df;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #003eaa;
+    }
+    .btn-secondary {
+      background-color: #f9f9fa;
+      color: #0060df;
+      border: 1px solid #0060df;
+    }
+    .btn-secondary:hover {
+      background-color: #f0f0f4;
+    }
+    .language-switch {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .language-switch a {
+      color: #0060df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    img {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="language-switch">
+    <a href="welcome-en.html">English</a> | <strong>Українська</strong>
+  </div>
+  
+  <div class="container">
+    <h1>Ласкаво просимо до AI Chat Broadcaster</h1>
+    
+    <p>Дякуємо за встановлення AI Chat Broadcaster! Цей додаток дозволяє одночасно надсилати однакові повідомлення у декілька відкритих AI-чатів, економлячи ваш час та зусилля.</p>
+    
+    <div class="note">
+      <strong>Примітка:</strong> Для роботи додатка вам необхідно мати відкриті вкладки з підтримуваними AI-чатами.
+    </div>
+    
+    <h2>Підтримувані AI-платформи</h2>
+    <ul>
+      <li>OpenAI ChatGPT (chat.openai.com)</li>
+      <li>Anthropic Claude (claude.ai)</li>
+      <li>Google Gemini (gemini.google.com)</li>
+    </ul>
+    
+    <h2>Як користуватися</h2>
+    
+    <div class="step">
+      <div class="step-number">1</div>
+      <strong>Відкрийте AI-чати у окремих вкладках</strong>
+      <p>Увійдіть у свої акаунти на підтримуваних платформах (ChatGPT, Claude, Gemini) і відкрийте їх у окремих вкладках браузера.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">2</div>
+      <strong>Натисніть на іконку додатка</strong>
+      <p>Натисніть на іконку AI Chat Broadcaster у панелі інструментів Firefox. У спливаючому вікні ви побачите список знайдених відкритих чатів.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">3</div>
+      <strong>Введіть повідомлення</strong>
+      <p>Введіть текст, який хочете відправити в усі чати, у текстове поле.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">4</div>
+      <strong>Виберіть чати і відправте повідомлення</strong>
+      <p>Відмітьте чати, в які хочете відправити повідомлення, і натисніть кнопку "Відправити до всіх вибраних чатів".</p>
+    </div>
+    
+    <h2>Поради та рекомендації</h2>
+    <ul>
+      <li>Переконайтеся, що ви увійшли в усі необхідні AI-чати перед використанням додатка.</li>
+      <li>Якщо повідомлення не відправляється автоматично, перевірте, чи видно поле введення тексту на сторінці чату.</li>
+      <li>Для найкращих результатів рекомендуємо спочатку відправити тестове повідомлення.</li>
+      <li>Зверніть увагу, що інтерфейси AI-чатів можуть змінюватися, що іноді може вплинути на роботу додатка.</li>
+    </ul>
+    
+    <div class="buttons">
+      <a href="#" class="btn btn-secondary" id="open-sample">Відкрити приклад AI-чату</a>
+      <a href="#" class="btn" id="start-using">Почати використання</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('start-using').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.close();
+    });
+    
+    document.getElementById('open-sample').addEventListener('click', function(e) {
+      e.preventDefault();
+      browser.tabs.create({ url: 'https://chat.openai.com/' });
+    });
+  </script>
+</body>
+</html>

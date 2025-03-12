@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to AI Chat Broadcaster</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #0060df;
+      border-bottom: 2px solid #0060df;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    h2 {
+      color: #0060df;
+      margin-top: 30px;
+    }
+    .step {
+      background-color: white;
+      border-left: 4px solid #0060df;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .step-number {
+      display: inline-block;
+      background-color: #0060df;
+      color: white;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .note {
+      background-color: #fff4e5;
+      border-left: 4px solid #ff9400;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #0060df;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #003eaa;
+    }
+    .btn-secondary {
+      background-color: #f9f9fa;
+      color: #0060df;
+      border: 1px solid #0060df;
+    }
+    .btn-secondary:hover {
+      background-color: #f0f0f4;
+    }
+    .language-switch {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .language-switch a {
+      color: #0060df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    img {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="language-switch">
+    <strong>English</strong> | <a href="welcome.html">Українська</a>
+  </div>
+  
+  <div class="container">
+    <h1>Welcome to AI Chat Broadcaster</h1>
+    
+    <p>Thank you for installing AI Chat Broadcaster! This extension allows you to simultaneously send the same message to multiple open AI chat tabs, saving your time and effort.</p>
+    
+    <div class="note">
+      <strong>Note:</strong> For this extension to work, you need to have tabs open with supported AI chat platforms.
+    </div>
+    
+    <h2>Supported AI Platforms</h2>
+    <ul>
+      <li>OpenAI ChatGPT (chat.openai.com)</li>
+      <li>Anthropic Claude (claude.ai)</li>
+      <li>Google Gemini (gemini.google.com)</li>
+    </ul>
+    
+    <h2>How to Use</h2>
+    
+    <div class="step">
+      <div class="step-number">1</div>
+      <strong>Open AI Chats in Separate Tabs</strong>
+      <p>Log into your accounts on supported platforms (ChatGPT, Claude, Gemini) and open them in separate browser tabs.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">2</div>
+      <strong>Click the Extension Icon</strong>
+      <p>Click on the AI Chat Broadcaster icon in the Firefox toolbar. In the popup, you will see a list of detected open chat tabs.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">3</div>
+      <strong>Enter Your Message</strong>
+      <p>Type the text you want to send to all chats in the text field.</p>
+    </div>
+    
+    <div class="step">
+      <div class="step-number">4</div>
+      <strong>Select Chats and Send</strong>
+      <p>Check the chats you want to send your message to, and click the "Send to all selected chats" button.</p>
+    </div>
+    
+    <h2>Tips and Recommendations</h2>
+    <ul>
+      <li>Make sure you are logged into all necessary AI chat platforms before using the extension.</li>
+      <li>If your message doesn't send automatically, check if the text input field is visible on the chat page.</li>
+      <li>For best results, we recommend sending a test message first.</li>
+      <li>Keep in mind that AI chat interfaces may change, which can occasionally affect the extension's functionality.</li>
+    </ul>
+    
+    <div class="buttons">
+      <a href="#" class="btn btn-secondary" id="open-sample">Open Sample AI Chat</a>
+      <a href="#" class="btn" id="start-using">Start Using</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('start-using').addEventListener('click', function(e) {
+      e.preventDefault();
+      window.close();
+    });
+    
+    document.getElementById('open-sample').addEventListener('click', function(e) {
+      e.preventDefault();
+      browser.tabs.create({ url: 'https://chat.openai.com/' });
+    });
+  </script>
+</body>
+</html>

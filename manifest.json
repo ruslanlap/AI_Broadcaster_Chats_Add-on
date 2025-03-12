@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "AI Chat Broadcaster",
+  "version": "1.0",
+  "description": "Відправляє текст одночасно в кілька AI-чатів",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
+    "default_title": "AI Chat Broadcaster",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}
