@@ -18,18 +18,6 @@ const CHAT_SELECTORS = {
     submitButton: 'button[aria-label="Send message"]',
     alternativeInputField: '[contenteditable="true"]'
   },
-  'gemini.google.com': {
-    inputField: 'textarea[aria-label="Ask Gemini"]',
-    submitButton: 'button[aria-label="Send message"]',
-    alternativeInputField: 'textarea',
-    altSubmitButton: 'button[type="submit"]'
-  },
-  'gemini.google.com/app': {
-    inputField: 'textarea[aria-label="Ask Gemini"]',
-    submitButton: 'button[aria-label="Send message"]',
-    alternativeInputField: 'textarea',
-    altSubmitButton: 'button[type="submit"]'
-  },
   'grok.com': {
     inputField: 'textarea.resize-none',
     submitButton: 'button[aria-label="Send message"]',
@@ -37,6 +25,12 @@ const CHAT_SELECTORS = {
     altInputField: 'textarea'
   },
   'chat.deepseek.com': {
+    inputField: 'textarea',
+    submitButton: 'button[type="submit"]',
+    alternativeSubmitButton: 'button[aria-label="Send message"]',
+    altInputField: 'div[contenteditable="true"]'
+  },
+  'chat.mistral.ai': {
     inputField: 'textarea',
     submitButton: 'button[type="submit"]',
     alternativeSubmitButton: 'button[aria-label="Send message"]',
@@ -61,16 +55,6 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Function to determine which AI chat is open
 function getCurrentChatType() {
   const url = window.location.href;
-  
-  // Special handling for Gemini, as it has multiple URL formats
-  if (url.includes('gemini.google.com/app')) {
-    const selectors = CHAT_SELECTORS['gemini.google.com/app'];
-    const hasInputField = document.querySelector(selectors.inputField) || 
-                         (selectors.alternativeInputField && document.querySelector(selectors.alternativeInputField));
-    if (hasInputField) {
-      return 'gemini.google.com/app';
-    }
-  }
   
   // Check each domain of supported chats
   for (const domain in CHAT_SELECTORS) {
@@ -184,9 +168,6 @@ function injectMessageIntoChat(messageText) {
       if (chatType === 'claude.ai') {
         // Claude uses ProseMirror - special editor
         handleClaudeMessage(inputField, messageText);
-      } else if (chatType === 'gemini.google.com') {
-        // For Gemini specific approach
-        handleGeminiMessage(inputField, messageText);
       } else if (chatType === 'grok.com') {
         // For Grok
         handleGrokMessage(inputField, messageText);
@@ -195,6 +176,9 @@ function injectMessageIntoChat(messageText) {
         handleChatGptMessage(inputField, messageText);
       } else if (chatType === 'chat.deepseek.com') {
         // Special approach for DeepSeek
+        handleDeepSeekMessage(inputField, messageText);
+      } else if (chatType === 'chat.mistral.ai') {
+        // For Mistral, using the same handler as DeepSeek initially
         handleDeepSeekMessage(inputField, messageText);
       } else {
         // For other chats, universal approach
@@ -318,66 +302,7 @@ function handleClaudeMessage(inputField, messageText) {
   }
 }
 
-// Handler for Gemini
-function handleGeminiMessage(inputField, messageText) {
-  try {
-    // First actively focus on input field
-    inputField.focus();
-    
-    // Clear field before setting new value
-    if (inputField.value !== undefined) {
-      inputField.value = '';
-    }
-    
-    // Use delay before setting value
-    setTimeout(() => {
-      // For Gemini first check if this is the right element
-      if (inputField.tagName.toLowerCase() === 'textarea') {
-        // For textarea use direct method
-        inputField.value = messageText;
-        
-        // Simulate key presses to activate field
-        inputField.dispatchEvent(new KeyboardEvent('keydown', { 
-          key: 'a',
-          code: 'KeyA',
-          bubbles: true,
-          cancelable: true 
-        }));
-        
-        // Send multiple input events for reliability
-        for (let i = 0; i < 2; i++) {
-          setTimeout(() => {
-            try {
-              const inputEvent = new Event('input', { bubbles: true });
-              inputField.dispatchEvent(inputEvent);
-            } catch (e) {
-              console.error('Error sending input event:', e);
-            }
-          }, i * 200);
-        }
-        
-        // Also try setting value through element.setAttribute
-        try {
-          inputField.setAttribute('value', messageText);
-        } catch (e) {
-          console.error('Error setting value through setAttribute:', e);
-        }
-      } else {
-        // For other element types
-        if (inputField.value !== undefined) {
-          inputField.value = messageText;
-        }
-        if (inputField.textContent !== undefined) {
-          inputField.textContent = messageText;
-        }
-      }
-      
-      console.log('Gemini: Set value and sent events');
-    }, 300);
-  } catch (error) {
-    console.error('Error handling Gemini:', error);
-  }
-}
+
 
 // Handler for Grok
 function handleGrokMessage(inputField, messageText) {
