@@ -1,79 +1,329 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <title>AI Chat Broadcaster</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      width: 350px;
-      font-family: Arial, sans-serif;
-      padding: 10px;
+    :root {
+      --background: #282a36;
+      --current-line: #44475a;
+      --foreground: #f8f8f2;
+      --comment: #6272a4;
+      --cyan: #8be9fd;
+      --green: #50fa7b;
+      --orange: #ffb86c;
+      --pink: #ff79c6;
+      --purple: #bd93f9;
+      --red: #ff5555;
+      --yellow: #f1fa8c;
     }
-    textarea {
-      width: 100%;
-      height: 150px;
-      margin-bottom: 10px;
-      padding: 8px;
+
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
-      resize: none;
     }
-    button {
-      background-color: #0060df;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
+
+    body {
+      width: 380px;
+      font-family: 'Inter', 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      padding: 16px;
+      border-radius: 8px;
     }
-    button:hover {
-      background-color: #003eaa;
-    }
-    .status {
-      margin-top: 10px;
-      padding: 8px;
-      border-radius: 4px;
-      display: none;
-    }
-    .success {
-      background-color: #e6ffe6;
-      color: #006600;
-      border: 1px solid #00cc00;
-    }
-    .error {
-      background-color: #ffe6e6;
-      color: #cc0000;
-      border: 1px solid #ff0000;
-    }
-    .chat-list {
-      margin-top: 10px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    .chat-item {
-      padding: 5px;
-      border-bottom: 1px solid #eee;
+
+    .header {
       display: flex;
       align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--current-line);
     }
-    .chat-item input[type="checkbox"] {
+
+    .header i {
+      color: var(--purple);
+      font-size: 24px;
+      margin-right: 12px;
+    }
+
+    h2 {
+      color: var(--purple);
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .container {
+      background-color: var(--current-line);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-bottom: 10px;
+      padding: 12px;
+      box-sizing: border-box;
+      resize: none;
+      background-color: var(--background);
+      color: var(--foreground);
+      border: 1px solid var(--comment);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 2px rgba(189, 147, 249, 0.3);
+    }
+
+    button {
+      background-color: var(--purple);
+      color: var(--background);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: var(--pink);
+      transform: translateY(-1px);
+    }
+
+    button i {
       margin-right: 8px;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .success {
+      background-color: rgba(80, 250, 123, 0.2);
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    .error {
+      background-color: rgba(255, 85, 85, 0.2);
+      color: var(--red);
+      border: 1px solid var(--red);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .section-title i {
+      margin-right: 8px;
+    }
+
+    .chat-list {
+      max-height: 180px;
+      overflow-y: auto;
+      background-color: var(--background);
+      border-radius: 6px;
+      border: 1px solid var(--current-line);
+    }
+
+    .chat-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chat-list::-webkit-scrollbar-track {
+      background: var(--background);
+    }
+
+    .chat-list::-webkit-scrollbar-thumb {
+      background-color: var(--comment);
+      border-radius: 20px;
+    }
+
+    .chat-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--current-line);
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+
+    .chat-item:hover {
+      background-color: rgba(68, 71, 90, 0.5);
+    }
+
+    .chat-item:last-child {
+      border-bottom: none;
+    }
+
+    .chat-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      background-color: var(--background);
+      border: 2px solid var(--comment);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .chat-item input[type="checkbox"]:checked {
+      background-color: var(--purple);
+      border-color: var(--purple);
+    }
+
+    .chat-item input[type="checkbox"]:checked::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      color: var(--background);
+      font-size: 12px;
+    }
+
+    .chat-item-name {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chat-item-icon {
+      margin-right: 8px;
+      color: var(--orange);
+    }
+
+    #no-chats-message {
+      padding: 16px;
+      text-align: center;
+      color: var(--comment);
+      font-style: italic;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--comment);
+      margin-top: 12px;
+    }
+
+    .badge {
+      background-color: var(--pink);
+      color: var(--background);
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+
+    .select-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .select-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-weight: 600;
+      width: auto;
+    }
+
+    .select-btn:hover {
+      text-decoration: underline;
+      background: none;
+      transform: none;
     }
   </style>
 </head>
 <body>
-  <h2>AI Chat Broadcaster</h2>
-  <textarea id="message-input" placeholder="Enter your message here..."></textarea>
-  
+  <div class="header">
+    <i class="fas fa-broadcast-tower"></i>
+    <h2>AI Chat Broadcaster</h2>
+    <span class="badge">Pro</span>
+  </div>
+
+  <div class="container">
+    <div class="section-title">
+      <i class="fas fa-pencil-alt"></i>
+      <span>Compose Message</span>
+    </div>
+    <textarea id="message-input" placeholder="Type your message to broadcast..."></textarea>
+  </div>
+
+  <div class="section-title">
+    <i class="fas fa-comment-dots"></i>
+    <span>AI Chat Targets</span>
+  </div>
+
+  <div class="select-controls">
+    <button class="select-btn" id="select-all">Select All</button>
+    <button class="select-btn" id="select-none">Deselect All</button>
+  </div>
+
   <div class="chat-list" id="chat-tabs">
     <!-- List of AI chats will be added dynamically via JavaScript -->
-    <div id="no-chats-message">Looking for open AI chats...</div>
+    <div id="no-chats-message">
+      <i class="fas fa-spinner fa-spin"></i> Scanning for open AI chats...
+    </div>
   </div>
-  
-  <button id="send-button">Send to all selected chats</button>
+
+  <button id="send-button">
+    <i class="fas fa-paper-plane"></i>
+    Broadcast Message
+  </button>
+
   <div id="status-message" class="status"></div>
-  
+
+  <div class="footer">
+    <span>AI Chat Broadcaster v2.1.0</span>
+    <span><i class="fas fa-cog"></i> Settings</span>
+  </div>
+
   <script src="popup.js"></script>
+  <script>
+    // Simple interactions for demo purposes
+    document.getElementById('select-all').addEventListener('click', function() {
+      console.log('Select all clicked');
+      // Logic would be added in popup.js
+    });
+
+    document.getElementById('select-none').addEventListener('click', function() {
+      console.log('Deselect all clicked');
+      // Logic would be added in popup.js
+    });
+  </script>
 </body>
 </html>
