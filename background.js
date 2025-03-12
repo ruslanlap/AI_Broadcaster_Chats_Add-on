@@ -37,6 +37,31 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse(diagnosticInfo);
   }
   
+  // Додано функціональність для підготовки вкладки
+  if (message.action === 'prepareTab') {
+    const tabId = message.tabId;
+    
+    // Переконуємося, що вкладка готова до роботи
+    browser.tabs.get(tabId).then(tab => {
+      if (tab.status === 'complete') {
+        sendResponse({ status: 'ready' });
+      } else {
+        // Якщо вкладка не повністю завантажена, чекаємо
+        setTimeout(() => {
+          browser.tabs.get(tabId).then(updatedTab => {
+            sendResponse({ status: updatedTab.status === 'complete' ? 'ready' : 'waiting' });
+          }).catch(err => {
+            sendResponse({ status: 'error', error: err.message });
+          });
+        }, 500);
+      }
+    }).catch(err => {
+      sendResponse({ status: 'error', error: err.message });
+    });
+    
+    return true; // Для асинхронної відповіді
+  }
+  
   return true; // Для асинхронної відповіді
 });
 
