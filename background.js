@@ -2,14 +2,39 @@
 
 // Слухаємо повідомлення від popup.js або content.js
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // Тут можна додати додаткову логіку, наприклад:
-  // - Збереження історії відправлених повідомлень
-  // - Додаткова обробка помилок
-  // - Інтеграція з іншими API браузера
+  // Обробка різних типів повідомлень
   
   if (message.action === 'logEvent') {
-    console.log('Подія з розширення:', message.data);
+    // Детальне логування з часовою міткою
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`[${timestamp}] Подія з розширення:`, message.data);
+    
+    // Якщо це помилка, показуємо детальніше в консолі
+    if (message.data && message.data.type === 'error') {
+      console.error(`[${timestamp}] ПОМИЛКА:`, message.data.message);
+      
+      // Можна додати збереження помилок для подальшого аналізу
+      const errors = JSON.parse(localStorage.getItem('aiChatErrors') || '[]');
+      errors.push({
+        timestamp: new Date().toISOString(),
+        message: message.data.message,
+        sender: sender.tab ? `Tab ${sender.tab.id}: ${sender.tab.url}` : 'popup'
+      });
+      // Зберігаємо останні 20 помилок
+      localStorage.setItem('aiChatErrors', JSON.stringify(errors.slice(-20)));
+    }
+    
     sendResponse({ received: true });
+  }
+  
+  // Додано функціональність для отримання діагностичної інформації
+  if (message.action === 'getDiagnostics') {
+    const diagnosticInfo = {
+      browserInfo: navigator.userAgent,
+      errors: JSON.parse(localStorage.getItem('aiChatErrors') || '[]'),
+      extensionVersion: browser.runtime.getManifest().version
+    };
+    sendResponse(diagnosticInfo);
   }
   
   return true; // Для асинхронної відповіді

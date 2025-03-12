@@ -82,6 +82,7 @@ function injectMessageIntoChat(messageText) {
   const chatType = getCurrentChatType();
   
   if (!chatType || !CHAT_SELECTORS[chatType]) {
+    console.error('Невідомий тип чату:', chatType);
     return { success: false, error: 'Невідомий тип чату' };
   }
   
@@ -92,118 +93,237 @@ function injectMessageIntoChat(messageText) {
   // Спробуємо альтернативні селектори, якщо основні не знайдено
   if (!inputField && selectors.alternativeInputField) {
     inputField = document.querySelector(selectors.alternativeInputField);
+    console.log('Використовуємо альтернативне поле вводу');
   }
   
   if (!submitButton && selectors.alternativeSubmitButton) {
     submitButton = document.querySelector(selectors.alternativeSubmitButton);
+    console.log('Використовуємо альтернативну кнопку відправки');
   }
   
   if (!inputField) {
-    return { success: false, error: 'Не знайдено поле вводу' };
+    console.error('Не знайдено поле вводу для', chatType);
+    // Додаткова спроба знайти будь-яке можливе поле вводу
+    const possibleInputs = document.querySelectorAll('textarea, [contenteditable="true"], input[type="text"]');
+    if (possibleInputs.length > 0) {
+      inputField = possibleInputs[0];
+      console.log('Знайдено можливе поле вводу:', inputField);
+    } else {
+      return { success: false, error: 'Не знайдено поле вводу' };
+    }
   }
   
   if (!submitButton) {
-    return { success: false, error: 'Не знайдено кнопку відправки' };
+    console.warn('Не знайдено кнопку відправки для', chatType, '- спробуємо використати Enter');
   }
   
+  // Показуємо, що ми намагаємось відправити повідомлення
+  console.log(`Відправляємо повідомлення в ${chatType}`);
+  
   try {
-    // Різні підходи для різних чатів (залежно від типу елементу вводу)
-    if (chatType === 'claude.ai') {
-      // Claude використовує ProseMirror - спеціальний редактор
-      inputField.focus();
-      
-      // Симулюємо ввід тексту через різні підходи
-      try {
-        // Спроба 1: через властивість textContent для contenteditable елементів
-        if (inputField.getAttribute('contenteditable') === 'true') {
-          inputField.textContent = messageText;
-          inputField.dispatchEvent(new Event('input', { bubbles: true }));
-        } else {
-          // Спроба 2: через paste event
-          const dataTransfer = new DataTransfer();
-          dataTransfer.setData('text/plain', messageText);
-          
-          inputField.dispatchEvent(new ClipboardEvent('paste', {
-            clipboardData: dataTransfer,
-            bubbles: true,
-            cancelable: true
-          }));
-        }
-      } catch (error) {
-        console.log('Помилка при вставці тексту в Claude: ', error);
-        // Спроба 3: через execCommand
-        document.execCommand('insertText', false, messageText);
-      }
-      
-    } else if (chatType === 'gemini.google.com') {
-      // Для Gemini специфічний підхід
-      inputField.focus();
-      inputField.value = messageText;
-      
-      // Симулюємо події для Gemini
-      const events = ['input', 'change', 'keydown', 'keyup'];
-      events.forEach(eventType => {
-        let event;
-        if (eventType.startsWith('key')) {
-          event = new KeyboardEvent(eventType, { key: 'a', bubbles: true });
-        } else {
-          event = new Event(eventType, { bubbles: true });
-        }
-        inputField.dispatchEvent(event);
-      });
-      
-    } else if (chatType === 'grok.com') {
-      // Для Grok
-      inputField.focus();
-      inputField.value = messageText;
-      
-      // Симулюємо події для Grok
-      const events = ['input', 'change', 'focus'];
-      events.forEach(eventType => {
-        inputField.dispatchEvent(new Event(eventType, { bubbles: true }));
-      });
-      
-    } else {
-      // Для ChatGPT та інших чатів, які використовують стандартні textarea/input
-      inputField.focus();
-      inputField.value = messageText;
-      
-      // Симулюємо всі можливі події, щоб активувати будь-які слухачі
-      const events = ['focus', 'input', 'change', 'keydown'];
-      events.forEach(eventType => {
-        let event;
-        if (eventType === 'keydown') {
-          event = new KeyboardEvent(eventType, { key: 'a', bubbles: true });
-        } else {
-          event = new Event(eventType, { bubbles: true });
-        }
-        inputField.dispatchEvent(event);
-      });
+    // Очищаємо поле вводу перед вставкою нового тексту
+    if (inputField.value) {
+      inputField.value = '';
+    }
+    if (inputField.textContent) {
+      inputField.textContent = '';
     }
     
-    // Додаємо затримку перед спробою натиснути кнопку
+    // Фокус на полі вводу з невеликою затримкою
     setTimeout(() => {
-      // Перевіряємо, чи кнопка submit активна
-      if (submitButton && !submitButton.disabled) {
-        // Спочатку фокусуємося на кнопці, щоб емулювати людські дії
-        submitButton.focus();
-        // Потім імітуємо клік
-        submitButton.click();
-      } else {
-        // Спробуємо відправити через Enter
-        inputField.dispatchEvent(new KeyboardEvent('keydown', { 
-          key: 'Enter',
-          code: 'Enter',
-          keyCode: 13,
-          which: 13,
-          bubbles: true
+      inputField.focus();
+      
+      // Різні підходи для різних чатів (залежно від типу елементу вводу)
+      if (chatType === 'claude.ai') {
+        // Claude використовує ProseMirror - спеціальний редактор
+        try {
+          // Спроба 1: через властивість textContent для contenteditable елементів
+          if (inputField.getAttribute('contenteditable') === 'true') {
+            inputField.textContent = messageText;
+            inputField.dispatchEvent(new Event('input', { bubbles: true }));
+            console.log('Метод 1: Встановлено textContent для contenteditable');
+          } else {
+            // Спроба 2: через paste event
+            const dataTransfer = new DataTransfer();
+            dataTransfer.setData('text/plain', messageText);
+            
+            inputField.dispatchEvent(new ClipboardEvent('paste', {
+              clipboardData: dataTransfer,
+              bubbles: true,
+              cancelable: true
+            }));
+            console.log('Метод 2: Використано paste event');
+          }
+        } catch (error) {
+          console.log('Помилка при вставці тексту в Claude, спробуємо execCommand: ', error);
+          // Спроба 3: через execCommand
+          document.execCommand('insertText', false, messageText);
+          console.log('Метод 3: Використано execCommand');
+        }
+      } else if (chatType === 'gemini.google.com') {
+        // Для Gemini специфічний підхід
+        inputField.value = messageText;
+        console.log('Встановлено значення для Gemini');
+        
+        // Симулюємо події для Gemini
+        const events = ['input', 'change', 'keydown', 'keyup'];
+        events.forEach(eventType => {
+          let event;
+          if (eventType.startsWith('key')) {
+            event = new KeyboardEvent(eventType, { key: 'a', bubbles: true });
+          } else {
+            event = new Event(eventType, { bubbles: true });
+          }
+          inputField.dispatchEvent(event);
+        });
+        console.log('Відправлено події для Gemini');
+      } else if (chatType === 'grok.com') {
+        // Для Grok
+        inputField.value = messageText;
+        console.log('Встановлено значення для Grok');
+        
+        // Симулюємо події для Grok з більшою кількістю подій
+        const events = ['input', 'change', 'focus', 'keydown', 'keyup'];
+        events.forEach(eventType => {
+          let event;
+          if (eventType.startsWith('key')) {
+            event = new KeyboardEvent(eventType, { 
+              key: eventType === 'keydown' ? 'a' : 'Enter',
+              bubbles: true 
+            });
+          } else {
+            event = new Event(eventType, { bubbles: true });
+          }
+          inputField.dispatchEvent(event);
+        });
+        console.log('Відправлено події для Grok');
+      } else if (chatType.includes('chat.openai.com') || chatType.includes('chatgpt.com')) {
+        // Спеціальний підхід для ChatGPT
+        inputField.value = messageText;
+        console.log('Встановлено значення для ChatGPT');
+        
+        // Симулюємо події з фокусом на специфічних для ChatGPT подіях
+        ['focus', 'input', 'change', 'keydown'].forEach(eventType => {
+          inputField.dispatchEvent(new Event(eventType, { bubbles: true }));
+        });
+        
+        // Додаткова симуляція введення тексту
+        inputField.dispatchEvent(new InputEvent('input', { 
+          bubbles: true,
+          data: messageText,
+          inputType: 'insertText'
         }));
+        console.log('Відправлено події для ChatGPT');
+      } else {
+        // Для інших чатів, універсальний підхід
+        try {
+          if (inputField.tagName.toLowerCase() === 'textarea' || inputField.tagName.toLowerCase() === 'input') {
+            inputField.value = messageText;
+            console.log('Встановлено value для елемента input/textarea');
+          } else if (inputField.getAttribute('contenteditable') === 'true') {
+            inputField.textContent = messageText;
+            console.log('Встановлено textContent для contenteditable');
+          } else {
+            // Якщо нічого не підходить, спробуємо обидва методи
+            inputField.value = messageText;
+            inputField.textContent = messageText;
+            console.log('Спроба встановити як value, так і textContent');
+          }
+        } catch (error) {
+          console.error('Помилка при встановленні тексту:', error);
+        }
+        
+        // Симулюємо більшу кількість подій для надійності
+        const events = ['focus', 'input', 'change', 'keydown', 'keyup', 'click'];
+        events.forEach(eventType => {
+          try {
+            let event;
+            if (eventType.startsWith('key')) {
+              event = new KeyboardEvent(eventType, { 
+                key: eventType === 'keydown' ? 'a' : 'Enter', 
+                bubbles: true 
+              });
+            } else if (eventType === 'input') {
+              event = new InputEvent('input', { 
+                bubbles: true,
+                data: messageText,
+                inputType: 'insertText'
+              });
+            } else {
+              event = new Event(eventType, { bubbles: true });
+            }
+            inputField.dispatchEvent(event);
+          } catch (error) {
+            console.error(`Помилка при відправці події ${eventType}:`, error);
+          }
+        });
+        console.log('Відправлено всі події для універсального підходу');
       }
-    }, 100);
+      
+      // Додаємо збільшену затримку перед спробою натиснути кнопку
+      setTimeout(() => {
+        console.log('Спроба відправити повідомлення...');
+        
+        // Перевіряємо, чи кнопка submit активна і видима
+        if (submitButton && !submitButton.disabled && isElementVisible(submitButton)) {
+          console.log('Знайдено активну кнопку відправки, натискаємо...');
+          // Додаткова перевірка для ChatGPT
+          if (chatType.includes('chatgpt') && submitButton.disabled) {
+            console.log('Кнопка ChatGPT неактивна, спробуємо відправити через Enter');
+            inputField.dispatchEvent(new KeyboardEvent('keydown', { 
+              key: 'Enter',
+              code: 'Enter',
+              keyCode: 13,
+              which: 13,
+              bubbles: true
+            }));
+          } else {
+            // Спочатку фокусуємося на кнопці
+            submitButton.focus();
+            // Потім імітуємо клік через різні методи
+            submitButton.click();
+            submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            console.log('Кнопку натиснуто');
+          }
+        } else {
+          console.log('Кнопка відправки не знайдена або неактивна, спробуємо відправити через Enter');
+          // Спробуємо відправити через Enter - це часто працює в більшості чатів
+          try {
+            // Спочатку фокус на полі вводу
+            inputField.focus();
+            // Потім симулюємо Enter
+            inputField.dispatchEvent(new KeyboardEvent('keydown', { 
+              key: 'Enter',
+              code: 'Enter',
+              keyCode: 13,
+              which: 13,
+              bubbles: true,
+              cancelable: true
+            }));
+            console.log('Відправлено Enter подію');
+          } catch (error) {
+            console.error('Помилка при відправці Enter:', error);
+          }
+        }
+      }, 500); // Збільшена затримка перед натисканням кнопки
+      
+    }, 200); // Затримка перед фокусуванням та вставкою тексту
     
     return { success: true };
   } catch (error) {
-    console.error('Помилка при вставці повідомлення:', error);
+    console.error('Загальна помилка при вставці повідомлення:', error);
     return { success: false, error: error.message };
   }
+}
+
+// Функція для перевірки, чи елемент видимий на сторінці
+function isElementVisible(element) {
+  if (!element) return false;
+  
+  const style = window.getComputedStyle(element);
+  return style.display !== 'none' && 
+         style.visibility !== 'hidden' && 
+         style.opacity !== '0' &&
+         element.offsetWidth > 0 && 
+         element.offsetHeight > 0;
 }

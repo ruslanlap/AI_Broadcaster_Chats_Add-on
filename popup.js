@@ -77,22 +77,33 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     
-    // Для кожної вибраної вкладки відправляємо повідомлення
-    const sendPromises = Array.from(selectedCheckboxes).map(checkbox => {
+    // Для кожної вибраної вкладки відправляємо повідомлення з більшою затримкою між відправками
+    const sendPromises = Array.from(selectedCheckboxes).map((checkbox, index) => {
       const tabId = parseInt(checkbox.dataset.tabId);
-      // Додаємо затримку між відправками в різні чати
+      // Збільшуємо затримку між відправками в різні чати
       return new Promise(resolve => setTimeout(() => {
-        browser.tabs.sendMessage(tabId, {
-          action: 'sendMessage',
-          message: message
-        }).then(response => {
-          console.log(`Успішно відправлено в tab ${tabId}`);
-          resolve(response || { success: true });
+        console.log(`Відправляємо повідомлення у вкладку ${tabId}...`);
+        
+        // Спочатку активуємо вкладку, щоб гарантувати, що вона в фокусі
+        browser.tabs.update(tabId, { active: true }).then(() => {
+          // Затримка після активації вкладки
+          setTimeout(() => {
+            browser.tabs.sendMessage(tabId, {
+              action: 'sendMessage',
+              message: message
+            }).then(response => {
+              console.log(`Успішно відправлено в tab ${tabId}:`, response);
+              resolve(response || { success: true });
+            }).catch(error => {
+              console.error(`Помилка при відправці в tab ${tabId}:`, error);
+              resolve({ tabId, success: false, error: error.message || "Невідома помилка" });
+            });
+          }, 300); // Затримка після активації вкладки
         }).catch(error => {
-          console.error(`Помилка при відправці в tab ${tabId}:`, error);
-          resolve({ tabId, success: false, error: error.message });
+          console.error(`Помилка при активації вкладки ${tabId}:`, error);
+          resolve({ tabId, success: false, error: "Помилка активації вкладки" });
         });
-      }, 100)); // Затримка 100мс між відправками
+      }, index * 700)); // Збільшена затримка між відправками (700мс на кожну вкладку)
     });
     
     // Чекаємо завершення всіх відправок
@@ -111,15 +122,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   
-  // Функція показу статусу
+  // Функція показу статусу з можливістю відображення деталей
   function showStatus(message, type) {
     statusMessage.textContent = message;
     statusMessage.className = `status ${type}`;
     statusMessage.style.display = 'block';
     
-    // Автоматично ховаємо через 5 секунд
+    // При помилці надсилаємо детальну інформацію в фоновий скрипт для логування
+    if (type === 'error') {
+      browser.runtime.sendMessage({
+        action: 'logEvent',
+        data: {
+          type: 'error',
+          message: message,
+          timestamp: new Date().toISOString()
+        }
+      }).catch(err => console.error('Помилка логування:', err));
+    }
+    
+    // Автоматично ховаємо через 15 секунд для помилок, 5 секунд для успіху
     setTimeout(() => {
       statusMessage.style.display = 'none';
-    }, 5000);
+    }, type === 'error' ? 15000 : 5000);
   }
 });
